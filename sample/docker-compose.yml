@@ -1,0 +1,59 @@
+# =============================================================================
+# Docker Compose — Development
+# =============================================================================
+# This file defines all 3 services: PostgreSQL, Django, and Nginx.
+# Run with: docker compose up -d --build
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # PostgreSQL Database
+  # ===========================================================================
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME:-notesdb}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432" # Expose for local development tools (pgAdmin, DBeaver)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ===========================================================================
+  # Django + Gunicorn
+  # ===========================================================================
+  web:
+    build: ./app
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    volumes:
+      - static_volume:/app/staticfiles
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ===========================================================================
+  # Nginx — Reverse Proxy
+  # ===========================================================================
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles
+    depends_on:
+      - web
+
+# =============================================================================
+# Named Volumes
+# =============================================================================
+volumes:
+  pgdata:        # Persistent PostgreSQL data
+  static_volume: # Shared between Django (write) and Nginx (read)

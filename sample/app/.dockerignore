@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+dist
+build
+.git
+.gitignore
+.env
+*.md
+venv
+.venv
+staticfiles
