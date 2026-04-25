@@ -53,6 +53,12 @@ services:
     depends_on:
       - web
 
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+
 # =============================================================================
 # Named Volumes
 # =============================================================================
