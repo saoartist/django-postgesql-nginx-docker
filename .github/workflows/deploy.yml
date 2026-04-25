@@ -33,7 +33,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             # Navigate to project directory
-            cd /home/${{ secrets.SERVER_USER }}/django-postgresql-nginx-docker/sample
+            cd /home/${{ secrets.SERVER_USER }}/django-postgesql-nginx-docker/sample
 
             # Pull latest code
             git pull origin main
