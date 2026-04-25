@@ -46,8 +46,10 @@ services:
     build: ./nginx
     ports:
       - "80:80"
+      - "443:443" 
     volumes:
       - static_volume:/app/staticfiles
+      - certbot_conf:/etc/letsencrypt   
     depends_on:
       - web
 
@@ -57,3 +59,5 @@ services:
 volumes:
   pgdata:        # Persistent PostgreSQL data
   static_volume: # Shared between Django (write) and Nginx (read)
+  certbot_conf:
+  certbot_www: 
